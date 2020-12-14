@@ -186,8 +186,8 @@ enum SC_States {SC_SMStart, SC_Wait, SC_Start, SC_Scan} SC_State;
 //Meat (Ribs, Shrimp, Burger Meat), Cans (Peas, Corn, Raviolis)
 //Array contains prices based on sizes of each individual item; increasing in size
 
-const unsigned char *price[12][3] = {{"1.00", "1.50", "2.75"}, {"1.00", "1.25", "2.00"}, {"1.05", "2.80", "3.64"}, {"1.00", "1.50", "2.00"}, {"1.25", "1.80", "2.10"}, {"1.10", "1.55", "1.80"}, {"3.26", "4.38", "5.10"}, {"4.30", "5.22", "5.90"}, {"2.44", "3.56", "4.28"}, {"0.85", "1.25", "1.60"}, {"0.85", "1.25", "1.60"}, {"1.05", "1.65", "2.00"}};
-const unsigned char *food_ID[12] = {"Milk", "OJ", "Soda", "Apples", "Bananas", "Grapes", "Ribs", "Shrimp", "B-Meat", "Peas", "Corn", "Raviolis"};
+char price[12][3] = {{"1.00", "1.50", "2.75"}, {"1.00", "1.25", "2.00"}, {"1.05", "2.80", "3.64"}, {"1.00", "1.50", "2.00"}, {"1.25", "1.80", "2.10"}, {"1.10", "1.55", "1.80"}, {"3.26", "4.38", "5.10"}, {"4.30", "5.22", "5.90"}, {"2.44", "3.56", "4.28"}, {"0.85", "1.25", "1.60"}, {"0.85", "1.25", "1.60"}, {"1.05", "1.65", "2.00"}};
+char food_ID[12] = {"Milk", "OJ", "Soda", "Apples", "Bananas", "Grapes", "Ribs", "Shrimp", "B-Meat", "Peas", "Corn", "Raviolis"};
 double price_calc[12][3] = {{1.00, 1.50, 2.75}, {1.00, 1.25, 2.00}, {1.05, 2.80, 3.64}, {1.00, 1.50, 2.00}, {1.25, 1.80, 2.10}, {1.10, 1.55, 1.80}, {3.26, 4.38, 5.10}, {4.30, 5.22, 5.90}, {2.44, 3.56, 4.28}, {0.85, 1.25, 1.60}, {0.85, 1.25, 1.60}, {1.05, 1.65, 2.00}};
 
 unsigned char i;
@@ -295,8 +295,8 @@ void TickFct_Scanner() {   //Tick Function that operates the item moving toward 
 enum GP_States {GP_SMStart, GP_Aisle, GP_Item, GP_Size, GP_More} GP_State;
 
 //Arrays for names of items in each group and their possible sizes
-unsigned char* food[4][3] = {{"Milk", "OJ", "Soda"}, {"Apple", "Banana", "Grapes"}, {"Ribs", "Shrimp", "Burger Meat"}, {"Peas", "Corn", "Raviolis"}};
-unsigned char* size[12][3] = {{"1)Bottle", "2)Quart", "3)Gallon"}, {"1)Bottle", "2)Quart", "3)Gallon"}, {"1)Liter", "2)12 cans", "3)6 b-pack"}, {"1)2 cnt", "2)4 cnt", "3)6 count"}, {"1)2 bnd", "2)4 bnd", "3)6 bundle"}, {"1)SM bg", "2)MDM bg", "3)LRG bag"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}};
+char food[4][3] = {{"Milk", "OJ", "Soda"}, {"Apple", "Banana", "Grapes"}, {"Ribs", "Shrimp", "Burger Meat"}, {"Peas", "Corn", "Raviolis"}};
+char size[12][3] = {{"1)Bottle", "2)Quart", "3)Gallon"}, {"1)Bottle", "2)Quart", "3)Gallon"}, {"1)Liter", "2)12 cans", "3)6 b-pack"}, {"1)2 cnt", "2)4 cnt", "3)6 count"}, {"1)2 bnd", "2)4 bnd", "3)6 bundle"}, {"1)SM bg", "2)MDM bg", "3)LRG bag"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}};
 
 unsigned char group_choice = 0;
 unsigned char item_choice = 0;
@@ -431,7 +431,7 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
 
 enum PAY_States {PAY_SMStart, PAY_Blank, PAY_Price, PAY_Bill} PAY_State;
 
-unsigned char *receipt;
+char receipt;
 
 void TickFct_Receipt() {   //Tick Function that operates the item moving toward scanner on LED screen
    
@@ -464,7 +464,7 @@ void TickFct_Receipt() {   //Tick Function that operates the item moving toward 
       case PAY_SMStart:
          break;
       case PAY_Blank:
-         receipt = 0.00;
+         receipt = 0;
          break;
       case PAY_Price:
          receipt = (unsigned char) amt;
