@@ -486,10 +486,10 @@ int main() {
    DDRB = 0x00; PORTB = 0xFF;
    
    // Initialize all synchSM states
-   CH_State = CH_SMStart;
-   SC_State = SC_SMStart;
-   GP_State = GP_SMStart;
-   PAY_State = PAY_SMStart;
+   //CH_State = CH_SMStart;
+   //SC_State = SC_SMStart;
+   //GP_State = GP_SMStart;
+   //PAY_State = PAY_SMStart;
    
   unsigned char i=0;
   tasks[i].state = CH_SMStart;
@@ -522,7 +522,7 @@ int main() {
    LCD_Cursor(1);
     
    while(1) {
-   		for ( i = 0; i < numTasks; i++ ) {
+   		for ( i = 0; i < tasksNum; i++ ) {
    			if ( tasks[i].elapsedTime == tasks[i].period ) {
    				tasks[i].state = tasks[i].TickFct(tasks[i].state);
    				tasks[i].elapsedTime = 0;
