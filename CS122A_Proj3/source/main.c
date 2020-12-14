@@ -186,8 +186,10 @@ enum SC_States {SC_SMStart, SC_Wait, SC_Start, SC_Scan} SC_State;
 //Meat (Ribs, Shrimp, Burger Meat), Cans (Peas, Corn, Raviolis)
 //Array contains prices based on sizes of each individual item; increasing in size
 
-unsigned char* price[12][3] = {{1.00, 1.50, 2.75}, {1.00, 1.25, 2.00}, {1.05, 2.80, 3.64}, {1.00, 1.50, 2.00}, {1.25, 1.80, 2.10}, {1.10, 1.55, 1.80}, {3.26, 4.38, 5.10}, {4.30, 5.22, 5.90}, {2.44, 3.56, 4.28}, {0.85, 1.25, 1.60}, {0.85, 1.25, 1.60}, {1.05, 1.65, 2.00}};
-unsigned char* food_ID[12] = {"Milk", "OJ", "Soda", "Apples", "Bananas", "Grapes", "Ribs", "Shrimp", "B-Meat", "Peas", "Corn", "Raviolis"};
+const unsigned char *price[12][3] = {{"1.00", "1.50", "2.75"}, {"1.00", "1.25", "2.00"}, {"1.05", "2.80", "3.64"}, {"1.00", "1.50", "2.00"}, {"1.25", "1.80", "2.10"}, {"1.10", "1.55", "1.80"}, {"3.26", "4.38", "5.10"}, {"4.30", "5.22", "5.90"}, {"2.44", "3.56", "4.28"}, {"0.85", "1.25", "1.60"}, {"0.85", "1.25", "1.60"}, {"1.05", "1.65", "2.00"}};
+const unsigned char *food_ID[12] = {"Milk", "OJ", "Soda", "Apples", "Bananas", "Grapes", "Ribs", "Shrimp", "B-Meat", "Peas", "Corn", "Raviolis"};
+double price_calc[12][3] = {{1.00, 1.50, 2.75}, {1.00, 1.25, 2.00}, {1.05, 2.80, 3.64}, {1.00, 1.50, 2.00}, {1.25, 1.80, 2.10}, {1.10, 1.55, 1.80}, {3.26, 4.38, 5.10}, {4.30, 5.22, 5.90}, {2.44, 3.56, 4.28}, {0.85, 1.25, 1.60}, {0.85, 1.25, 1.60}, {1.05, 1.65, 2.00}};
+
 unsigned char i;
 double amt = 0.00;
 unsigned char position[2] = {4, 20};
@@ -272,7 +274,7 @@ void TickFct_Scanner() {   //Tick Function that operates the item moving toward 
          }
          break;
       case SC_Scan:
-         amt += price[rndmItem][rndmGrp]);
+         amt += price_calc[rndmItem][rndmGrp];
          LCD_DisplayString(1, food_ID[rndmItem]);
          LCD_DisplayString(10, price[rndmItem][rndmGrp]);
          LCD_DisplayString(17, "Cont.?  Y  or  N");
@@ -309,7 +311,7 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
          break;
       case GP_Aisle:
          if ((~PINA & 0x7F) == 0x08 || (~PINA & 0x7F) == 0x10 || (~PINA & 0x7F) == 0x20 || (~PINA & 0x7F) == 0x40) {
-            if (active == 2) {
+            if (activate == 2) {
                if ((~PINA & 0x7F) == 0x08) {
                   group_choice = 3;
                }
@@ -367,8 +369,8 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
          }
          break;
       case GP_More:
-         if (more) {
-            GP_State = GP_Item; 
+         if (more2) {
+            GP_State = GP_Aisle; 
          }
          else {
             GP_State = GP_More; 
@@ -386,7 +388,7 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
          group_choice = 0;
          item_choice = 0;
          sz_choice = 0;
-         more = 0;
+         more2 = 0;
          pay = 0;
          if ((~PINA & 0x03) == 0x02) {
             amt = 0;
@@ -409,11 +411,11 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
          LCD_DisplayString(19, size[item_choice][2]);
          break; 
       case GP_More:
-         amt += price[item_choice][sz_choice];
+         amt += price_calc[item_choice][sz_choice];
          
          LCD_DisplayString(3, "Yes?     No?      ADD MORE    ");
          if ((~PINA & 0x7F) == 0x20) {
-            more = 1;
+            more2 = 1;
          }
          else if ((~PINA & 0x7F) == 0x40) {
             pay = 1;
@@ -429,7 +431,7 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
 
 enum PAY_States {PAY_SMStart, PAY_Blank, PAY_Price, PAY_Bill} PAY_State;
 
-unsigned char receipt = 0.00;
+unsigned char *receipt;
 
 void TickFct_Receipt() {   //Tick Function that operates the item moving toward scanner on LED screen
    
@@ -465,7 +467,7 @@ void TickFct_Receipt() {   //Tick Function that operates the item moving toward 
          receipt = 0.00;
          break;
       case PAY_Price:
-         receipt = amt;
+         receipt = (unsigned char) amt;
          LCD_DisplayString(3, "Total Payment:   $");
          LCD_DisplayString(18, receipt);
          break;
