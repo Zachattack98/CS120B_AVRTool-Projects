@@ -73,7 +73,7 @@ cat > "$name"/header/simAVRHeader.h << EOF
 #endif
 
 #include <avr/sleep.h>
-#include "include/simavr/avr/avr_mcu_section.h"
+#include "/usr/csshare/pkgs/simavr/include/simavr/avr/avr_mcu_section.h"
 AVR_MCU(F_CPU,"$mmcu");
 AVR_MCU_VCD_FILE("build/results/${name}_trace.vcd",1000);
 

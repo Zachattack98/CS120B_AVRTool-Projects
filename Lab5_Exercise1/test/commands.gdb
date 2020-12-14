@@ -229,17 +229,3 @@ define expect
         output /d $arg0
     end
 end
-
-define timeContinue
-    if $argc > 0
-        set $i = $arg0
-    else
-        set $i = 1
-    end
-    while $i > 0
-        set TimerFlag = 1
-        continue
-        set $i = $i - 1
-    end
-end
-

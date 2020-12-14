@@ -1,0 +1,10 @@
+No line 19 in file "main.c".
+Make breakpoint pending on future shared library load? (y or [n]) [answered N; input not from terminal]
+test/initDebugger.gdb:13: Error in sourced command file:
+Argument required (one or more breakpoint numbers).
+======================================================
+Running all tests..."
+
+"PINA: 0x00, PINB: 0x00 => PORTC: 0"...Error detected on fd 6
+test/tests.gdb:35: Error in sourced command file:
+Remote communication error.  Target disconnected.: Interrupted system call.
