@@ -275,9 +275,9 @@ void TickFct_Scanner() {   //Tick Function that operates the item moving toward 
          break;
       case SC_Scan:
          amt += price_calc[rndmItem][rndmGrp];
-         LCD_DisplayString(1, food_ID[rndmItem]);
-         LCD_DisplayString(10, price[rndmItem][rndmGrp]);
-         LCD_DisplayString(17, "Cont.?  Y  or  N");
+         //LCD_DisplayString(1, food_ID[rndmItem]);
+         //LCD_DisplayString(10, price[rndmItem][rndmGrp]);
+         //LCD_DisplayString(17, "Cont.?  Y  or  N");
          if((~PINA & 0x3F) == 0x40) {
             more1 = 1;
          }
@@ -394,26 +394,26 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
             amt = 0;
          }
          if(activate == 2) {
-            LCD_DisplayString(1, "Drinks   ");
-            LCD_DisplayString(9, "Produce");
-            LCD_DisplayString(17, "Meat   ");
-            LCD_DisplayString(24, "CanGoods");
+            //LCD_DisplayString(1, "Drinks   ");
+            //LCD_DisplayString(9, "Produce");
+            //LCD_DisplayString(17, "Meat   ");
+            //LCD_DisplayString(24, "CanGoods");
          }
          break;
       case GP_Item:
-         LCD_DisplayString(1, food[group_choice][0]);
-         LCD_DisplayString(9, food[group_choice][1]);
-         LCD_DisplayString(19, food[group_choice][2]);
+         //LCD_DisplayString(1, food[group_choice][0]);
+         //LCD_DisplayString(9, food[group_choice][1]);
+         //LCD_DisplayString(19, food[group_choice][2]);
          break;
       case GP_Size:
-         LCD_DisplayString(1, size[item_choice][0]);
-         LCD_DisplayString(9, size[item_choice][1]);
-         LCD_DisplayString(19, size[item_choice][2]);
+         //LCD_DisplayString(1, size[item_choice][0]);
+         //LCD_DisplayString(9, size[item_choice][1]);
+         //LCD_DisplayString(19, size[item_choice][2]);
          break; 
       case GP_More:
          amt += price_calc[item_choice][sz_choice];
          
-         LCD_DisplayString(3, "Yes?     No?      ADD MORE    ");
+         //LCD_DisplayString(3, "Yes?     No?      ADD MORE    ");
          if ((~PINA & 0x7F) == 0x20) {
             more2 = 1;
          }
@@ -468,8 +468,8 @@ void TickFct_Receipt() {   //Tick Function that operates the item moving toward 
          break;
       case PAY_Price:
          receipt = (unsigned char) amt;
-         LCD_DisplayString(3, "Total Payment:   $");
-         LCD_DisplayString(18, receipt);
+         //LCD_DisplayString(3, "Total Payment:   $");
+         //LCD_DisplayString(18, receipt);
          break;
       default:
          PAY_State = PAY_SMStart;
