@@ -132,10 +132,10 @@ void TickFct_Checkout() {   //Tick Function that displays the checkout lights as
 	 rndmLED = (rand() % 31) + 1;
          break;
       case CH_On:
-         PORTD = rndmLED;
+         PORTB = rndmLED;
          break;
       case CH_Blink:
-         PORTD = 0x00;
+         PORTB = 0x00;
          break;
       case CH_Reset:
          rndmLED = (rand() % 31) + 1;
@@ -196,7 +196,7 @@ enum SC_States {SC_SMStart, SC_Wait, SC_Start, SC_Scan} SC_State;
 //Array contains prices based on sizes of each individual item; increasing in size
 
 //const char* price[12][3] = {{"1.00", "1.50", "2.75"}, {"1.00", "1.25", "2.00"}, {"1.05", "2.80", "3.64"}, {"1.00", "1.50", "2.00"}, {"1.25", "1.80", "2.10"}, {"1.10", "1.55", "1.80"}, {"3.26", "4.38", "5.10"}, {"4.30", "5.22", "5.90"}, {"2.44", "3.56", "4.28"}, {"0.85", "1.25", "1.60"}, {"0.85", "1.25", "1.60"}, {"1.05", "1.65", "2.00"}};
-const char* food_ID[12] = {"Milk", "OJ", "Soda", "Apples", "Bananas", "Grapes", "Ribs", "Shrimp", "B-Meat", "Peas", "Corn", "Raviolis"};
+//const unsigned char food_ID[12] = {"Milk", "OJ", "Soda", "Apples", "Bananas", "Grapes", "Ribs", "Shrimp", "B-Meat", "Peas", "Corn", "Raviolis"};
 double price[12][3] = {{1.00, 1.50, 2.75}, {1.00, 1.25, 2.00}, {1.05, 2.80, 3.64}, {1.00, 1.50, 2.00}, {1.25, 1.80, 2.10}, {1.10, 1.55, 1.80}, {3.26, 4.38, 5.10}, {4.30, 5.22, 5.90}, {2.44, 3.56, 4.28}, {0.85, 1.25, 1.60}, {0.85, 1.25, 1.60}, {1.05, 1.65, 2.00}};
 
 unsigned char i;
@@ -245,9 +245,6 @@ void TickFct_Scanner() {   //Tick Function that operates the item moving toward 
          	if (more1 == 1) {
             		SC_State = SC_Start;
          	}
-         	//else if (more1 == 2) {
-            		//SC_State = SC_Wait;
-         	//}
          	else {
             		SC_State = SC_Scan;
          	}
@@ -295,8 +292,6 @@ void TickFct_Scanner() {   //Tick Function that operates the item moving toward 
          break;
       case SC_Scan:
          amt += price[rndmItem][rndmGrp];
-         //LCD_WriteData(food_ID[rndmItem]);
-         //LCD_WriteFloat(price[rndmItem][rndmGrp]);
          LCD_DisplayString(17, "Cont.?  Y  or  N");
          if((~PINA & 0x7F) == 0x40) {
             more1 = 1;
@@ -318,17 +313,13 @@ void TickFct_Scanner() {   //Tick Function that operates the item moving toward 
 enum GP_States {GP_SMStart, GP_Wait, GP_Aisle, GP_Item, GP_Size, GP_More} GP_State;
 
 //Arrays for names of items in each group and their possible sizes
-const char* food[4][3] = {{"Milk", "OJ", "Soda"}, {"Apples", "Bananas", "Grapes"}, {"Ribs", "Shrimp", "Burger Meat"}, {"Peas", "Corn", "Raviolis"}};
-const char* size[12][3] = {{"1)Bottle", "2)Quart", "3)Gallon"}, {"1)Bottle", "2)Quart", "3)Gallon"}, {"1)Liter", "2)12 cans", "3)6 b-pack"}, {"1)2 cnt", "2)4 cnt", "3)6 count"}, {"1)2 bnd", "2)4 bnd", "3)6 bundle"}, {"1)SM bg", "2)MDM bg", "3)LRG bag"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}};
+//const unsigned char food[4][3] = {{"Milk", "OJ", "Soda"}, {"Apples", "Bananas", "Grapes"}, {"Ribs", "Shrimp", "Burger Meat"}, {"Peas", "Corn", "Raviolis"}};
+//const unsigned char size[12][3] = {{"1)Bottle", "2)Quart", "3)Gallon"}, {"1)Bottle", "2)Quart", "3)Gallon"}, {"1)Liter", "2)12 cans", "3)6 b-pack"}, {"1)2 cnt", "2)4 cnt", "3)6 count"}, {"1)2 bnd", "2)4 bnd", "3)6 bundle"}, {"1)SM bg", "2)MDM bg", "3)LRG bag"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}};
 
 unsigned char group_choice = 0;
 unsigned char item_choice = 0;
 unsigned char sz_choice = 0;
 unsigned char more2 = 0;
-
-//double amt = 0.00;
-//unsigned char pay = 0;
-//double price[12][3] = {{1.00, 1.50, 2.75}, {1.00, 1.25, 2.00}, {1.05, 2.80, 3.64}, {1.00, 1.50, 2.00}, {1.25, 1.80, 2.10}, {1.10, 1.55, 1.80}, {3.26, 4.38, 5.10}, {4.30, 5.22, 5.90}, {2.44, 3.56, 4.28}, {0.85, 1.25, 1.60}, {0.85, 1.25, 1.60}, {1.05, 1.65, 2.00}};
 
 void TickFct_Stock() {   //Tick Function that operates the item moving toward scanner on LED screen
    
@@ -427,9 +418,6 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
          if (more2 == 1) {
             GP_State = GP_Aisle; 
          }
-	 //else if (more2 == 2) {
-            //GP_State = GP_Wait; 
-         //}
          else {
             GP_State = GP_More; 
          }
@@ -516,12 +504,10 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
          LCD_DisplayString(3, "Yes?     No?      ADD MORE    ");
          if ((~PINA & 0x7F) == 0x40) {
             more2 = 1;
-	    LCD_ClearScreen();
          }
          else if ((~PINA & 0x7F) == 0x20) {
             pay = 1;
 	    more2 = 0;
-            LCD_ClearScreen();
 	    activate = 0;
          }
          break; 
@@ -530,10 +516,9 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
    }
 }
 
+enum PAY_States {PAY_SMStart, PAY_Blank, PAY_Price} PAY_State;
 
-enum PAY_States {PAY_SMStart, PAY_Blank, PAY_Price, PAY_Bill} PAY_State;
-
-double receipt;
+double receipt = 0.00;
 
 void TickFct_Receipt() {   //Tick Function that operates the item moving toward scanner on LED screen
    
@@ -551,7 +536,6 @@ void TickFct_Receipt() {   //Tick Function that operates the item moving toward 
          break;
       case PAY_Price:
          if ((~PINA & 0x7F) == 0x02) {
-	    //LCD_ClearScreen();
             PAY_State = PAY_Blank;
          }
          else {
@@ -575,7 +559,6 @@ void TickFct_Receipt() {   //Tick Function that operates the item moving toward 
 	 LCD_DisplayString(17, "^^ Total Payment");
          break;
       default:
-         PAY_State = PAY_SMStart;
          break;
    }
 }
@@ -584,8 +567,8 @@ int main() {
     
    DDRA = 0x00; PORTA = 0xFF;
    DDRC = 0xFF; PORTC = 0x00;
-   DDRD = 0xFF; PORTD = 0x00;
-   DDRB = 0x00; PORTB = 0xFF;
+   DDRD = 0xC0; PORTD = 0x3F;
+   DDRB = 0xFF; PORTB = 0x00;
    
   unsigned char i=0;
   tasks[i].state = CH_SMStart;
@@ -607,7 +590,6 @@ int main() {
   tasks[i].period = 100;
   tasks[i].elapsedTime = tasks[i].period;
   tasks[i].TickFct = &TickFct_Receipt;  
-  i++;
 
    TimerSet(10);
    TimerOn();
