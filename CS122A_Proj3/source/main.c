@@ -66,19 +66,6 @@ void data (unsigned char row, unsigned char col, unsigned char item) {
    LCD_WriteData(item);
 }
 
-void valid_CH (unsigned char val) {
-	if((~PINA & 0x80) == 0x01) {
-        	if ((~PINA & 0x3F) == 0x01) {
-               		val = 2;
-		}
-        }
-	else if((~PINA & 0x80) == 0x00) {
-            	if ((~PINA & 0x3F) == 0x01) {
-               		val = 1;
-	    	}
-        }
-}
-
 //start of synchSms
 
 enum CH_States {CH_SMStart, CH_Begin, CH_On, CH_Blink, CH_Reset, CH_Select} CH_State;
@@ -93,41 +80,45 @@ void TickFct_Checkout() {   //Tick Function that displays the checkout lights as
          CH_State = CH_Begin; //Initial state
          break;
       case CH_Begin:
-         rndmLED = (rand() % 31) + 1;
          CH_State = CH_On;
          break;
       case CH_On:
-         if ((~PINA & 0x03) == 0x02) {
+         if ((~PINA & 0x7F) == 0x02) {
             CH_State = CH_Reset;
          }
-         else if ((~PINA & 0x03) == 0x01) {
+         else if ((~PINA & 0x7F) == 0x01) {
             CH_State = CH_Select;
          }
-         else if ((~PINA & 0x03) == 0x00) {
+         else if ((~PINA & 0x7F) == 0x00) {
             CH_State = CH_Blink;
          }
          break;
       case CH_Blink:
-         if ((~PINA & 0x03) == 0x02) {
+         if ((~PINA & 0x7F) == 0x02) {
             CH_State = CH_Reset;
          }
-         else if ((~PINA & 0x03) == 0x01) {
+         else if ((~PINA & 0x7F) == 0x01) {
             CH_State = CH_Select;
          }
-         else if ((~PINA & 0x03) == 0x00) {
+         else if ((~PINA & 0x7F) == 0x00) {
             CH_State = CH_On;
          }
          break;
       case CH_Reset:
-         if ((~PINA & 0x03) == 0x02) {
+         if ((~PINA & 0x7F) == 0x02) {
             CH_State = CH_Reset;
          }
-         else if ((~PINA & 0x03) == 0x00) {
+         else if ((~PINA & 0x7F) == 0x00) {
             CH_State = CH_On;
          }
          break;
       case CH_Select:
-         CH_State = CH_On;
+         if ((~PINA & 0x7F) == 0x01) {
+            CH_State = CH_Select;
+         }
+         else if ((~PINA & 0x7F) == 0x00) {
+            CH_State = CH_On;
+         }
          break;
       default:
          CH_State = CH_SMStart;
@@ -136,6 +127,9 @@ void TickFct_Checkout() {   //Tick Function that displays the checkout lights as
 
    switch (CH_State ) { //State actions
       case CH_SMStart:
+         break;
+      case CH_Begin:
+	 rndmLED = (rand() % 31) + 1;
          break;
       case CH_On:
          PORTD = rndmLED;
@@ -150,19 +144,44 @@ void TickFct_Checkout() {   //Tick Function that displays the checkout lights as
          break;
       case CH_Select:
          if ((rndmLED <= 31 && rndmLED >= 16) && (((~PINB & 0x1F) == 0x1F) || ((~PINB & 0x1F) == 0x1E) || ((~PINB & 0x1F) == 0x1D) || ((~PINB & 0x1F) == 0x1C) || ((~PINB & 0x1F) == 0x1B) || ((~PINB & 0x1F) == 0x1A) || ((~PINB & 0x1F) == 0x19) || ((~PINB & 0x1F) == 0x18) || ((~PINB & 0x1F) == 0x17) || ((~PINB & 0x1F) == 0x16) || ((~PINB & 0x1F) == 0x15) || ((~PINB & 0x1F) == 0x14) || ((~PINB & 0x1F) == 0x13) || ((~PINB & 0x1F) == 0x12) || ((~PINB & 0x11) == 0x15) || ((~PINB & 0x1F) == 0x10))) {
-            valid_CH(activate);
+            if((~PINA & 0x80) == 0x01) {
+        	if ((~PINA & 0x7F) == 0x01) {
+               		activate = 2;
+		}
+            }
+		else if((~PINA & 0x80) == 0x00) {
+            		if ((~PINA & 0x7F) == 0x01) {
+               			activate = 1;
+	    		}
+        	}
          }
          else if ((rndmLED <= 15 && rndmLED >= 8) && (((~PINB & 0x1F) == 0x0F) || ((~PINB & 0x1F) == 0x0E) || ((~PINB & 0x1F) == 0x0D) || ((~PINB & 0x1F) == 0x0C) || ((~PINB & 0x1F) == 0x0B) || ((~PINB & 0x1F) == 0x0A) || ((~PINB & 0x1F) == 0x09) || ((~PINB & 0x1F) == 0x08))) {
-            valid_CH(activate);
+            if((~PINA & 0x80) == 0x01) {
+        	if ((~PINA & 0x7F) == 0x01) {
+               		activate = 2;
+		}
+            }
          }
          else if ((rndmLED <= 7 && rndmLED >= 4) && (((~PINB & 0x1F) == 0x07) || ((~PINB & 0x1F) == 0x06) || ((~PINB & 0x1F) == 0x05) || ((~PINB & 0x1F) == 0x04))) {
-            valid_CH(activate);
+            if((~PINA & 0x80) == 0x01) {
+        	if ((~PINA & 0x7F) == 0x01) {
+               		activate = 2;
+		}
+            }
          }
          else if ((rndmLED == 3 || rndmLED == 2) && (((~PINB & 0x1F) == 0x03) || ((~PINB & 0x1F) == 0x02))) {
-            valid_CH(activate);
+            if((~PINA & 0x80) == 0x01) {
+        	if ((~PINA & 0x7F) == 0x01) {
+               		activate = 2;
+		}
+            }
          }
          else if ((rndmLED == 1) && ((~PINB & 0x1F) == 0x01)) {
-            valid_CH(activate);
+            if((~PINA & 0x80) == 0x01) {
+        	if ((~PINA & 0x7F) == 0x01) {
+               		activate = 2;
+		}
+            }
          }
          break;
       default:
@@ -170,22 +189,21 @@ void TickFct_Checkout() {   //Tick Function that displays the checkout lights as
    }
 }
 
-
 enum SC_States {SC_SMStart, SC_Wait, SC_Start, SC_Scan} SC_State;
 
 //Prices in 2-d array: Drinks (Milk, Orange Juice, Soda), Produce (Apples, Bananas, Grapes), 
 //Meat (Ribs, Shrimp, Burger Meat), Cans (Peas, Corn, Raviolis)
 //Array contains prices based on sizes of each individual item; increasing in size
 
-const char* price[12][3] = {{"1.00", "1.50", "2.75"}, {"1.00", "1.25", "2.00"}, {"1.05", "2.80", "3.64"}, {"1.00", "1.50", "2.00"}, {"1.25", "1.80", "2.10"}, {"1.10", "1.55", "1.80"}, {"3.26", "4.38", "5.10"}, {"4.30", "5.22", "5.90"}, {"2.44", "3.56", "4.28"}, {"0.85", "1.25", "1.60"}, {"0.85", "1.25", "1.60"}, {"1.05", "1.65", "2.00"}};
+//const char* price[12][3] = {{"1.00", "1.50", "2.75"}, {"1.00", "1.25", "2.00"}, {"1.05", "2.80", "3.64"}, {"1.00", "1.50", "2.00"}, {"1.25", "1.80", "2.10"}, {"1.10", "1.55", "1.80"}, {"3.26", "4.38", "5.10"}, {"4.30", "5.22", "5.90"}, {"2.44", "3.56", "4.28"}, {"0.85", "1.25", "1.60"}, {"0.85", "1.25", "1.60"}, {"1.05", "1.65", "2.00"}};
 const char* food_ID[12] = {"Milk", "OJ", "Soda", "Apples", "Bananas", "Grapes", "Ribs", "Shrimp", "B-Meat", "Peas", "Corn", "Raviolis"};
-double price_calc[12][3] = {{1.00, 1.50, 2.75}, {1.00, 1.25, 2.00}, {1.05, 2.80, 3.64}, {1.00, 1.50, 2.00}, {1.25, 1.80, 2.10}, {1.10, 1.55, 1.80}, {3.26, 4.38, 5.10}, {4.30, 5.22, 5.90}, {2.44, 3.56, 4.28}, {0.85, 1.25, 1.60}, {0.85, 1.25, 1.60}, {1.05, 1.65, 2.00}};
+double price[12][3] = {{1.00, 1.50, 2.75}, {1.00, 1.25, 2.00}, {1.05, 2.80, 3.64}, {1.00, 1.50, 2.00}, {1.25, 1.80, 2.10}, {1.10, 1.55, 1.80}, {3.26, 4.38, 5.10}, {4.30, 5.22, 5.90}, {2.44, 3.56, 4.28}, {0.85, 1.25, 1.60}, {0.85, 1.25, 1.60}, {1.05, 1.65, 2.00}};
 
 unsigned char i;
 double amt = 0.00;
 unsigned char position[2] = {4, 20};
-unsigned char scan = 0, more1 = 0, pay = 0;
 unsigned char htag[2] = {15, 31};
+unsigned char scan = 0, more1 = 0, pay = 0;
 unsigned char rndmGrp, rndmItem;
 
 void TickFct_Scanner() {   //Tick Function that operates the item moving toward scanner on LED screen
@@ -203,23 +221,37 @@ void TickFct_Scanner() {   //Tick Function that operates the item moving toward 
          }
          break;
       case SC_Start:
-         if (scan == 1) {
-            SC_State = SC_Scan;
-         }
+	 if((~PINA & 0x7F) == 0x02) {
+		SC_State = SC_Wait;
+		amt = 0;
+		pay = 0;
+	 }
          else {
-            SC_State = SC_Start;
-         }
+         	if (scan == 1) {
+            		SC_State = SC_Scan;
+         	}	
+         	else {
+            		SC_State = SC_Start;
+         	}
+	 }
          break;
       case SC_Scan:
-         if (more1 == 1) {
-            SC_State = SC_Start;
-         }
-         else if (more1 == 2) {
-            SC_State = SC_Wait;
-         }
+	 if((~PINA & 0x7F) == 0x02) {
+		SC_State = SC_Wait;
+		amt = 0;
+		pay = 0;
+	 }
          else {
-            SC_State = SC_Scan;
-         }
+         	if (more1 == 1) {
+            		SC_State = SC_Start;
+         	}
+         	//else if (more1 == 2) {
+            		//SC_State = SC_Wait;
+         	//}
+         	else {
+            		SC_State = SC_Scan;
+         	}
+	 }
          break;
       default:
          SC_State = SC_SMStart;
@@ -234,7 +266,6 @@ void TickFct_Scanner() {   //Tick Function that operates the item moving toward 
          rndmItem = 0;
          scan = 0;
          more1 = 0;
-         pay = 0;
          break;
       case SC_Start:
          rndmGrp = (rand() % 3);
@@ -247,7 +278,7 @@ void TickFct_Scanner() {   //Tick Function that operates the item moving toward 
             }
 	    else if(htag[i] == 16) {
                htag[i] = 31;
-               data(1,0, ' ');
+               data(1,16, ' ');
             }
             else {
                htag[i]--;
@@ -263,16 +294,16 @@ void TickFct_Scanner() {   //Tick Function that operates the item moving toward 
          }
          break;
       case SC_Scan:
-         amt += price_calc[rndmItem][rndmGrp];
-         //LCD_DisplayString(1, food_ID[rndmItem]);
-         //LCD_DisplayString(10, price[rndmItem][rndmGrp]);
+         amt += price[rndmItem][rndmGrp];
+         //LCD_WriteData(food_ID[rndmItem]);
+         //LCD_WriteFloat(price[rndmItem][rndmGrp]);
          LCD_DisplayString(17, "Cont.?  Y  or  N");
          if((~PINA & 0x7F) == 0x40) {
             more1 = 1;
 	    LCD_ClearScreen();
          }
          else if((~PINA & 0x7F) == 0x20) {
-            more1 = 2;
+            more1 = 0;
             pay = 1;
 	    LCD_ClearScreen();
 	    activate = 0;
@@ -287,7 +318,7 @@ void TickFct_Scanner() {   //Tick Function that operates the item moving toward 
 enum GP_States {GP_SMStart, GP_Wait, GP_Aisle, GP_Item, GP_Size, GP_More} GP_State;
 
 //Arrays for names of items in each group and their possible sizes
-const char* food[4][3] = {{"Milk", "OJ", "Soda"}, {"Apple", "Banana", "Grapes"}, {"Ribs", "Shrimp", "Burger Meat"}, {"Peas", "Corn", "Raviolis"}};
+const char* food[4][3] = {{"Milk", "OJ", "Soda"}, {"Apples", "Bananas", "Grapes"}, {"Ribs", "Shrimp", "Burger Meat"}, {"Peas", "Corn", "Raviolis"}};
 const char* size[12][3] = {{"1)Bottle", "2)Quart", "3)Gallon"}, {"1)Bottle", "2)Quart", "3)Gallon"}, {"1)Liter", "2)12 cans", "3)6 b-pack"}, {"1)2 cnt", "2)4 cnt", "3)6 count"}, {"1)2 bnd", "2)4 bnd", "3)6 bundle"}, {"1)SM bg", "2)MDM bg", "3)LRG bag"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM pk", "2)MDM pk", "3)LRG package"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}, {"1)SM cn", "2)MDM cn", "3)LRG can"}};
 
 unsigned char group_choice = 0;
@@ -295,11 +326,15 @@ unsigned char item_choice = 0;
 unsigned char sz_choice = 0;
 unsigned char more2 = 0;
 
+//double amt = 0.00;
+//unsigned char pay = 0;
+//double price[12][3] = {{1.00, 1.50, 2.75}, {1.00, 1.25, 2.00}, {1.05, 2.80, 3.64}, {1.00, 1.50, 2.00}, {1.25, 1.80, 2.10}, {1.10, 1.55, 1.80}, {3.26, 4.38, 5.10}, {4.30, 5.22, 5.90}, {2.44, 3.56, 4.28}, {0.85, 1.25, 1.60}, {0.85, 1.25, 1.60}, {1.05, 1.65, 2.00}};
+
 void TickFct_Stock() {   //Tick Function that operates the item moving toward scanner on LED screen
    
    switch ( GP_State ) { //Transitions
       case GP_SMStart:
-         GP_State = GP_Item; //Initial state
+         GP_State = GP_Wait; //Initial state
          break;
       case GP_Wait:
 	if (activate == 2) {
@@ -313,6 +348,7 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
 	if((~PINA & 0x7F) == 0x02) {
 		GP_State = GP_Wait;
 		amt = 0;
+		pay = 0;
 	}
 	else {
          if ((~PINA & 0x7F) == 0x08 || (~PINA & 0x7F) == 0x10 || (~PINA & 0x7F) == 0x20 || (~PINA & 0x7F) == 0x40) {
@@ -339,11 +375,12 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
 	if((~PINA & 0x7F) == 0x02) {
 		GP_State = GP_Wait;
 		amt = 0;
+		pay = 0;
 	}
 	else {
          if ((~PINA & 0x7F) == 0x10 || (~PINA & 0x7F) == 0x20 || (~PINA & 0x7F) == 0x40) {
             if ((~PINA & 0x7F) == 0x10) {
-               item_choice = 2;
+               item_choice = group_choice*3 + 2;
             }
             else if ((~PINA & 0x7F) == 0x20) {
                item_choice = group_choice*3 + 1;
@@ -362,6 +399,7 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
 	if((~PINA & 0x7F) == 0x02) {
 		GP_State = GP_Wait;
 		amt = 0;
+		pay = 0;
 	}
 	else {
          if ((~PINA & 0x7F) == 0x10 || (~PINA & 0x7F) == 0x20 || (~PINA & 0x7F) == 0x40) {
@@ -389,9 +427,9 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
          if (more2 == 1) {
             GP_State = GP_Aisle; 
          }
-	 else if (more2 == 2) {
-            GP_State = GP_Wait; 
-         }
+	 //else if (more2 == 2) {
+            //GP_State = GP_Wait; 
+         //}
          else {
             GP_State = GP_More; 
          }
@@ -410,40 +448,79 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
          item_choice = 0;
          sz_choice = 0;
          more2 = 0;
-         pay = 0;
          break;
       case GP_Aisle:
-         if ((~PINA & 0x3F) == 0x02) {
-            amt = 0;
-         }
-	 else {
-            LCD_DisplayString(1, "Drinks   ");
-            LCD_DisplayString(9, "Produce");
-            LCD_DisplayString(17, "Meat   ");
-            LCD_DisplayString(24, "CanGoods");
-	 }
+            LCD_DisplayString(1, "Drinks  Produce Meat   CanGoods ");
          break;
       case GP_Item:
          //LCD_DisplayString(1, food[group_choice][0]);
          //LCD_DisplayString(9, food[group_choice][1]);
          //LCD_DisplayString(19, food[group_choice][2]);
+	 if(group_choice == 0) {
+		LCD_DisplayString(1, "Milk    OJ        Soda          ");
+	 }
+	 else if(group_choice == 1) {
+		LCD_DisplayString(1, "Apples  Bananas   Grapes        ");
+	 }	
+	 else if(group_choice == 2) {
+		LCD_DisplayString(1, "Ribs    Shrimp    Burger Meat   ");
+	 }
+         else if(group_choice == 3) {
+		LCD_DisplayString(1, "Peas    Corn      Raviolis      ");
+	 }	
          break;
       case GP_Size:
          //LCD_DisplayString(1, size[item_choice][0]);
          //LCD_DisplayString(9, size[item_choice][1]);
          //LCD_DisplayString(19, size[item_choice][2]);
+	 if(item_choice == 0) {
+		LCD_DisplayString(1, "1)Bottle 2)Quart  3)Gallon      ");
+	 }
+	 else if(item_choice == 1) {
+		LCD_DisplayString(1, "1)Bottle 2)Quart  3)Gallon      ");
+	 }	
+	 else if(item_choice == 2) {
+		LCD_DisplayString(1, "1)Liter 2)12cans  3)6 b-pack    ");
+	 }
+         else if(item_choice == 3) {
+		LCD_DisplayString(1, "1)2 cnt  2)4 cnt  3)6 count     ");
+	 }
+         else if(item_choice == 4) {
+		LCD_DisplayString(1, "1)2 bnd  2)4 bnd  3)6 bundle    ");
+	 }
+	 else if(item_choice == 5) {
+		LCD_DisplayString(1, "1)SM bg 2)MDM bg  3)LRG bag     ");
+	 }	
+	 else if(item_choice == 6) {
+		LCD_DisplayString(1, "1)SM pk 2)MDM pk  3)LRG package ");
+	 }
+         else if(item_choice == 7) {
+		LCD_DisplayString(1, "1)SM pk 2)MDM pk  3)LRG package ");
+	 }
+	 else if(item_choice == 8) {
+		LCD_DisplayString(1, "1)SM pk 2)MDM pk  3)LRG package ");
+	 }
+	 else if(item_choice == 9) {
+		LCD_DisplayString(1, "1)SM cn 2)MDM cn  3)LRG can     ");
+	 }
+         else if(item_choice == 10) {
+		LCD_DisplayString(1, "1)SM cn 2)MDM cn  3)LRG can     ");
+	 }
+	 else if(item_choice == 11) {
+		LCD_DisplayString(1, "1)SM cn 2)MDM cn  3)LRG can     ");
+	 }
          break; 
       case GP_More:
-         amt += price_calc[item_choice][sz_choice];
+         amt += price[item_choice][sz_choice];
          
          LCD_DisplayString(3, "Yes?     No?      ADD MORE    ");
-         if ((~PINA & 0x7F) == 0x20) {
+         if ((~PINA & 0x7F) == 0x40) {
             more2 = 1;
 	    LCD_ClearScreen();
          }
-         else if ((~PINA & 0x7F) == 0x40) {
+         else if ((~PINA & 0x7F) == 0x20) {
             pay = 1;
-	    more2 = 2;
+	    more2 = 0;
             LCD_ClearScreen();
 	    activate = 0;
          }
@@ -456,7 +533,7 @@ void TickFct_Stock() {   //Tick Function that operates the item moving toward sc
 
 enum PAY_States {PAY_SMStart, PAY_Blank, PAY_Price, PAY_Bill} PAY_State;
 
-char receipt;
+double receipt;
 
 void TickFct_Receipt() {   //Tick Function that operates the item moving toward scanner on LED screen
    
@@ -473,8 +550,8 @@ void TickFct_Receipt() {   //Tick Function that operates the item moving toward 
          }
          break;
       case PAY_Price:
-         if ((~PINA & 0x3F) == 0x02) {
-	    LCD_ClearScreen();
+         if ((~PINA & 0x7F) == 0x02) {
+	    //LCD_ClearScreen();
             PAY_State = PAY_Blank;
          }
          else {
@@ -490,19 +567,18 @@ void TickFct_Receipt() {   //Tick Function that operates the item moving toward 
       case PAY_SMStart:
          break;
       case PAY_Blank:
-         receipt = 0;
+         receipt = 0.00;
          break;
       case PAY_Price:
-         receipt = (unsigned char) amt;
-         LCD_DisplayString(3, "Total Payment:   $");
-         //LCD_DisplayString(18, receipt);
+         receipt = amt;
+         //LCD_WriteFloat(receipt);
+	 LCD_DisplayString(17, "^^ Total Payment");
          break;
       default:
          PAY_State = PAY_SMStart;
          break;
    }
 }
-
 
 int main() {
     
@@ -511,34 +587,28 @@ int main() {
    DDRD = 0xFF; PORTD = 0x00;
    DDRB = 0x00; PORTB = 0xFF;
    
-   // Initialize all synchSM states
-   //CH_State = CH_SMStart;
-   //SC_State = SC_SMStart;
-   //GP_State = GP_SMStart;
-   //PAY_State = PAY_SMStart;
-   
   unsigned char i=0;
   tasks[i].state = CH_SMStart;
-  tasks[i].period = 50;
+  tasks[i].period = 100;
   tasks[i].elapsedTime = tasks[i].period;
   tasks[i].TickFct = &TickFct_Checkout;  
   i++;
   tasks[i].state = SC_SMStart;
-  tasks[i].period = 50;
+  tasks[i].period = 100;
   tasks[i].elapsedTime = tasks[i].period;
   tasks[i].TickFct = &TickFct_Scanner;  
   i++;
   tasks[i].state = GP_SMStart;
-  tasks[i].period = 50;
+  tasks[i].period = 100;
   tasks[i].elapsedTime = tasks[i].period;
-  tasks[i].TickFct = &TickFct_Stock;  
+  tasks[i].TickFct = &TickFct_Stock;
   i++;
   tasks[i].state = PAY_SMStart;
-  tasks[i].period = 50;
+  tasks[i].period = 100;
   tasks[i].elapsedTime = tasks[i].period;
   tasks[i].TickFct = &TickFct_Receipt;  
   i++;
-  
+
    TimerSet(10);
    TimerOn();
    LCD_init();
