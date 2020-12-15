@@ -14,6 +14,9 @@
 #include "simAVRHeader.h"
 #endif
 
+volatile unsigned char TimerFlag = 0;
+unsigned long _avr_timer_M = 1;
+unsigned long _avr_timer_cntcurr = 0;
 
 typedef struct task {
   int state;                  // Task's current state
@@ -497,26 +500,23 @@ int main() {
   tasks[i].elapsedTime = tasks[i].period;
   tasks[i].TickFct = &TickFct_Checkout;  
   i++;
-  
   tasks[i].state = SC_SMStart;
   tasks[i].period = 1000;
   tasks[i].elapsedTime = tasks[i].period;
   tasks[i].TickFct = &TickFct_Scanner;  
   i++;
-  
   tasks[i].state = GP_SMStart;
   tasks[i].period = 1000;
   tasks[i].elapsedTime = tasks[i].period;
   tasks[i].TickFct = &TickFct_Stock;  
   i++;
-  
   tasks[i].state = PAY_SMStart;
   tasks[i].period = 500;
   tasks[i].elapsedTime = tasks[i].period;
   tasks[i].TickFct = &TickFct_Receipt;  
   i++;
   
-   TimerSet(10);
+   TimerSet(100);
    TimerOn();
    LCD_init();
    LCD_Cursor(1);
